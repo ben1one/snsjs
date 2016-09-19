@@ -19,7 +19,9 @@ $sns = {
 			line: "",
 			kakaotalk : "",
 			kakaostory : "",
-			email: ""		
+			email: "",
+			googleplus: "", 
+			link:""
 		}		
 	},
 	//For sharing the result
@@ -38,26 +40,33 @@ $sns = {
 			line: "",
 			kakaotalk : "",
 			kakaostory : "",
-			email: ""		
+			email: "",
+			googleplus: "", 
+			link:""			
 		}		
 	}, 
 	settings:{
+		label:{
+			link:""
+		},
 		keys:{
 			facebook: {appId : "0"}, 
-			kakaotalk:{k_app_id : "b1c55c1999cae48477cd951993e35c6d", k_app_name : "EF Destination"}
+			kakaotalk:{k_app_id : "", k_app_name : ""}
 		},
 		selectors: {
 			sns:{
-				whatsapp: ".icon-ef-whatsapp", 
-				facebook: ".icon-ef-facebook",
-				twitter: ".icon-ef-twitter",
-				weibo: ".icon-ef-weibo",
-				qzone: ".icon-ef-qzone",
-				wechat: ".icon-ef-wechat",
-				line: ".icon-ef-LINE",
-				kakaotalk : ".icon-ef-kakaotalk",
-				kakaostory : ".icon-ef-kakaostory",
-				email: ".icon-ef-email"
+				whatsapp: ".icon-whatsapp", 
+				facebook: ".icon-facebook",
+				twitter: ".icon-twitter",
+				weibo: ".icon-weibo",
+				qzone: ".icon-qzone",
+				wechat: ".icon-wechat",
+				line: ".icon-LINE",
+				kakaotalk : ".icon-kakaotalk",
+				kakaostory : ".icon-kakaostory",
+				email: ".icon-email",
+				googleplus:".icon-google-plus",
+				link:".icon-link"
 			}, 
 			share:{
 				site : ".share-site",
@@ -66,7 +75,7 @@ $sns = {
 			device:{
 				desktop:"desktop", 
 				mobile: "mobile", 
-				wrapper : "body"
+				wrapper : "html"
 			}
 		}, 
 		blacklist: {
@@ -89,9 +98,11 @@ $sns = {
 		qzone: "http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={u}&title={t}&pics={i}&summary={d}",
 		wechat: "http://efcampaigns.cn/share/wechat.php?link={u}&imgUrl={i}&desc={d}&t={t}",
 		line: "http://line.naver.jp/R/msg/text/?{t}",
-		kakaotalk : "http://media.ef.com/Campaign/2015/YourEnglishPersonality/frontend/share-kakaotalk.html?post={u}&imageurl={i}&desc={d}&title={t}&key={key}",
+		kakaotalk : "/Campaign/2015/YourEnglishPersonality/frontend/share-kakaotalk.html?post={u}&imageurl={i}&desc={d}&title={t}&key={key}",
 		kakaostory : "https://story.kakao.com/s/share?url={u}&text={d}",
-		email: "mailto:?subject={t}&body={u}"
+		email: "mailto:?subject={t}&body={u}",
+		googleplus:"https://plus.google.com/share?url={u}", 
+		link:""
 	},
 	loaded : false,
 	init: function(){
@@ -101,15 +112,12 @@ $sns = {
 		return};
 		
 		if (this.mobilecheck()) {
-			jQuery(this.settings.selectors.device.wrapper).addClass(this.settings.selectors.device.mobile);
+			//jQuery(this.settings.selectors.device.wrapper).addClass(this.settings.selectors.device.mobile);
 			} else {
-			jQuery(this.settings.selectors.device.wrapper).addClass(this.settings.selectors.device.desktop);
+			//jQuery(this.settings.selectors.device.wrapper).addClass(this.settings.selectors.device.desktop);
 		}
 		this.hideElement();
-		
-		if(!(jQuery('body').hasClass('mkt-cn'))){
-			this.loadFbAPI();
-		}
+		//this.loadFbAPI();
 		
 		//Fix popup block
 		jQuery.each(this.settings.selectors.sns, function(key, value) {
@@ -167,7 +175,11 @@ $sns = {
 			if( key == "email"){
 				_this['site']['links'][key] = _this['endpoints'][key].replace('{u}', encodeURIComponent( _this.site.getDesc() + " " + _this.site.getUrl())).replace('{t}', encodeURIComponent(_this.site.getTitle()));
 				_this['result']['links'][key] = _this['endpoints'][key].replace('{u}', encodeURIComponent( _this.result.getDesc() + " " + _this.result.getUrl())).replace('{t}', encodeURIComponent(_this.result.getTitle()));
-			}							
+			}		
+			if( key == "googleplus"){
+				_this['site']['links'][key] = _this['endpoints'][key].replace('{u}', encodeURIComponent(  _this.site.getUrl()));
+				_this['result']['links'][key] = _this['endpoints'][key].replace('{u}', encodeURIComponent(  _this.result.getUrl()));
+			}			
 		});
 	}, 
 	bindLink: function(){
@@ -192,7 +204,7 @@ $sns = {
 		var _this = this;
 		jQuery.each(this.settings.selectors.sns, function(key, value) {
 			//----
-			jQuery(document).on('click', _this['settings']['selectors']['sns'][key]+':not("'+_this['settings']['selectors']['sns']['email']+','+_this['settings']['selectors']['sns']['wechat']+', '+_this['settings']['selectors']['share']['result'] +" "+_this['settings']['selectors']['sns']['facebook']+'")', function (e) {
+			jQuery(document).on('click', _this['settings']['selectors']['sns'][key]+':not("'+_this['settings']['selectors']['sns']['link']+','+_this['settings']['selectors']['sns']['email']+','+_this['settings']['selectors']['sns']['wechat']+', '+_this['settings']['selectors']['share']['result'] +" "+_this['settings']['selectors']['sns']['facebook']+'")', function (e) {
 				e.preventDefault();
 				_this.buildLink();
 				_this.bindLink();
@@ -236,6 +248,11 @@ $sns = {
 				window.open(jQuery(this).attr('href'), "mywindow", "menubar=1,resizable=1,width=800,height=570");
 			}
 			
+		});	
+		//----
+		jQuery(document).on('click', _this['settings']['selectors']['sns']['link'], function (e) {
+			e.preventDefault();
+			prompt(_this.settings.label.link , _this.site.getUrl());		
 		});	
 		
 	}, 
@@ -324,14 +341,7 @@ $sns = {
 		return navigator.userAgent.toLowerCase().indexOf("micromessenger") !== -1;
 	},
 	getMarket : function(){
-		if( typeof jQuery('body').attr('class') == "undefined"){
 			return "we";
-		}else{
-			var str = jQuery('body').attr('class');
-			var re = /mkt-(..)/;
-			var found = str.match(re);
-			return found[1];
-		}
 	},
 	loadFbAPI : function(){
 		jQuery('body').append('<div id="fb-root"></div>');
@@ -348,7 +358,7 @@ $sns = {
 			var js, fjs = d.getElementsByTagName(s)[0];
 			if (d.getElementById(id)) {return;}
 			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&version=v2.6";
+			js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1&version=v2.6";
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	}
