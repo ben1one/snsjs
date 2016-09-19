@@ -77,17 +77,6 @@ $sns = {
 				mobile: "mobile", 
 				wrapper : "html"
 			}
-		}, 
-		blacklist: {
-			we : [],
-			hk : [ "qzone", "wechat","kakaotalk", "kakaostory"],
-			cn : ["whatsapp","facebook","twitter", "line", "kakaotalk", "kakaostory"],
-			tw : ["whatsapp", "weibo", "qzone", "wechat", "kakaotalk", "kakaostory"],
-			jp : ["whatsapp","kakaotalk", "kakaostory","weibo", "qzone", "wechat"],
-			kr : ["whatsapp","weibo", "qzone", "wechat"],
-			id : ["weibo", "qzone", "wechat","kakaotalk", "kakaostory"],
-			vn : ["weibo", "qzone", "wechat","kakaotalk", "kakaostory"],
-			th : ["weibo", "qzone", "wechat","kakaotalk", "kakaostory"]
 		}
 	}, 
 	endpoints:{
@@ -96,7 +85,7 @@ $sns = {
 		twitter: "http://twitter.com/share?text={t}&url={u}",
 		weibo: "http://service.weibo.com/share/share.php?type=button&language=zh_cn&title={t}&url={u}&pic={i}&searchPic=false&style=simple&content=utf-8",
 		qzone: "http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={u}&title={t}&pics={i}&summary={d}",
-		wechat: "http://efcampaigns.cn/share/wechat.php?link={u}&imgUrl={i}&desc={d}&t={t}",
+		wechat: "/share/wechat.php?link={u}&imgUrl={i}&desc={d}&t={t}",
 		line: "http://line.naver.jp/R/msg/text/?{t}",
 		kakaotalk : "/Campaign/2015/YourEnglishPersonality/frontend/share-kakaotalk.html?post={u}&imageurl={i}&desc={d}&title={t}&key={key}",
 		kakaostory : "https://story.kakao.com/s/share?url={u}&text={d}",
@@ -257,22 +246,7 @@ $sns = {
 		
 	}, 
 	hideElement : function(){
-		var _this = this;
-		
-		//Hide disabled SNS
-		//blacklist
-		jQuery.each(_this.settings.selectors.sns, function(key, value) {
-			var mkt = _this.getMarket();
-			if(typeof _this['settings']['blacklist'][mkt] === "undefined"){
-				_this['settings']['blacklist'][mkt] = [];
-			}			
-			var arr = _this['settings']['blacklist'][mkt];
-
-			if( arr.indexOf(key) != -1 ){
-				//console.log("Hide "value);
-				_this.cssHide(_this['settings']['selectors']['sns'][key]);
-			}
-		});
+		var _this = this;		
 			
 		//WeChat in Webview : Show only WeChat
 		if (_this.isMicromessenger()) {
